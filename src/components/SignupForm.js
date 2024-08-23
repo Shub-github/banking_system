@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +15,7 @@ function SignupForm({ setIsLoggedIn }) {
   });
 
   const [showPassword, setShowPassword] = useState(false);
-  const [accountType, setAccountType] = useState("student");
+  // const [accountType, setAccountType] = useState("student");
 
   function changeHandler(event) {
     setFormData((prevData) => ({
@@ -24,21 +24,66 @@ function SignupForm({ setIsLoggedIn }) {
     }));
   }
 
+  useEffect(() => {
+    // Load user data from session storage on component mount
+    const savedUser = sessionStorage.getItem("user");
+    if (savedUser) {
+      setFormData(JSON.parse(savedUser));
+    }
+  }, []);
+
   function submitHandler(event) {
     event.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       toast.error("Password do not match !!");
       return;
     }
-    setIsLoggedIn(true);
-    toast.success("Account Created !!");
+    // setIsLoggedIn(true);
+    // toast.success("Account Created !!");
     const accountData = {
       ...formData,
     };
-    console.log("printing Data with navigate to Dashboard !!");
-    console.log(accountData);
 
-    navigate("/dashboard");
+    // Creating session
+
+    // Retrieve the existing users from session storage
+    const existingUsers = JSON.parse(sessionStorage.getItem("users")) || [];
+
+    // Check if this is the first user
+    const isFirstUser = existingUsers.length === 0;
+
+    const newUser = {
+      username: formData.firstName + " " + formData.lastName, // Add a space between firstName and lastName
+      password: formData.password,
+      email: formData.email,
+      role: isFirstUser ? "admin" : "user",
+    };
+
+    // Add the new user to the users array
+    existingUsers.push(newUser);
+
+    // Save the updated users array in session storage
+    sessionStorage.setItem("users", JSON.stringify(existingUsers));
+
+    // Save the current user data in session storage
+    sessionStorage.setItem("user", JSON.stringify(newUser));
+
+    // Update the user state in the application
+    setFormData(newUser);
+    setFormData({
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
+    toast.success("Registration successful !!");
+
+    // console.log("printing Data with navigate to Dashboard !!");
+    console.log(newUser);
+
+    // navigate("/dashboard");
+    navigate("/login");
   }
 
   return (
@@ -69,7 +114,7 @@ function SignupForm({ setIsLoggedIn }) {
       </div> */}
 
       {/* First name & Last name */}
-      <form onSubmit={submitHandler}>
+      <form onSubmit={submitHandler} autoComplete="off">
         <div className="flex gap-x-4 mt-[20px]">
           <label className="w-full">
             <p className="text-[0.875rem] text-richblack-5 mb-1 leading-[1.375rem]">

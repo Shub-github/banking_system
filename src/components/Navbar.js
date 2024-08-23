@@ -2,10 +2,19 @@ import React from "react";
 import logo from "../assets/Logo.png";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 function Navbar(props) {
   let isLoggedIn = props.isLoggedIn;
   let setIsLoggedIn = props.setIsLoggedIn;
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    sessionStorage.removeItem("user");
+    sessionStorage.clear();
+    // alert("Logged out successfully!");
+    navigate("/login");
+  };
+
   return (
     <div className="flex justify-between items-center w-11/12 max-w-[1160px] py-4 mx-auto">
       <Link to="/">
@@ -64,6 +73,8 @@ function Navbar(props) {
               onClick={() => {
                 setIsLoggedIn(false);
                 toast.success("Logged out!!");
+
+                handleLogout();
               }}
             >
               Logout

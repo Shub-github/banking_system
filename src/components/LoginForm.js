@@ -4,6 +4,8 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import AdminDashboard from "./AdminDashboard";
+import UserDashboard from "./UserDashboard";
 
 const LoginForm = ({ setIsLoggedIn }) => {
   const navigate = useNavigate();
@@ -14,6 +16,15 @@ const LoginForm = ({ setIsLoggedIn }) => {
 
   const [showPassword, setShowPassword] = useState(false);
 
+  // useEffect(() => {
+  //   // Load user data from session storage on component mount
+  //   const savedUser = sessionStorage.getItem("users");
+  //   console.log("===svd====>", savedUser);
+  //   if (savedUser) {
+  //     setFormData(JSON.parse(savedUser));
+  //   }
+  // }, []);
+
   function changeHandler(event) {
     setFormData((prevData) => ({
       ...prevData,
@@ -23,15 +34,61 @@ const LoginForm = ({ setIsLoggedIn }) => {
 
   function submitHandler(event) {
     event.preventDefault();
-    setIsLoggedIn(true);
-    toast.success("Logged In !!");
-    navigate("/dashboard");
+
+    // const savedUser = JSON.parse(sessionStorage.getItem("user"));
+    // Retrieve the existing users array from session storage
+    const existingUsers = JSON.parse(sessionStorage.getItem("users")) || [];
+    // console.log("===existingUsers====>", existingUsers);
+    // Find the user with the matching username and password
+    const savedUser = existingUsers.find(
+      (user) =>
+        user.email === formData.email && user.password === formData.password
+    );
+    // console.log("====svd2====>", savedUser);
+
+    if (savedUser) {
+      // Set the logged-in user in session storage
+      sessionStorage.setItem("user", JSON.stringify(savedUser));
+
+      // Update the formData and isLoggedIn state
+      setFormData(savedUser);
+      setIsLoggedIn(true);
+      setFormData({
+        email: "",
+        password: "",
+      });
+
+      // Display success message and navigate to the appropriate dashboard
+      toast.success("Logged In !!");
+      navigate("/dashboard");
+      // navigate(
+      //   savedUser.role === "admin" ? "/admin-dashboard" : "/user-dashboard"
+      // ); // Redirect based on user role
+    } else {
+      toast.error("Invalid username or password");
+    }
+
+    // if (
+    //   savedUser &&
+    //   savedUser.email === formData.email && // Use formData.username instead of username
+    //   savedUser.password === formData.password // Use formData.password instead of password
+    // ) {
+    //   setFormData(savedUser); // Update formData with the saved user details
+    //   setIsLoggedIn(true); // Set the user as logged in
+    //   toast.success("Logged In !!"); // Display a toast notification
+    //   navigate(
+    //     savedUser.role === "admin" ? "/admin-dashboard" : "/user-dashboard"
+    //   ); // Redirect based on user role
+    // } else {
+    //   alert("Invalid username or password");
+    // }
   }
 
   return (
     <form
       className="flex flex-col w-full gap-y-4 mt-6"
       onSubmit={submitHandler}
+      autoComplete="off"
     >
       <label className="w-full">
         <p className="text-[0.875rem] text-richblack-5 mb-1 leading-[1.375rem]">
