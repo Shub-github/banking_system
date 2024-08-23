@@ -136,7 +136,7 @@ function SignupForm({ setIsLoggedIn }) {
               className="bg-richblack-800 rounded-[0.5rem] text-richblack-5 w-full p-[12px]"
             />
             <span
-              className="absolute right-3 top-[38px] cursor-pointer"
+              className="absolute right-3 top-[38px] cursor-pointer text-white"
               onClick={() => setShowPassword((prev) => !prev)}
             >
               {showPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
@@ -149,7 +149,7 @@ function SignupForm({ setIsLoggedIn }) {
             </p>
             <input
               required
-              placeholder="Enter Confirm Password !!"
+              placeholder="Confirm Password !!"
               type={showPassword ? "text" : "password"}
               name="confirmPassword"
               value={formData.confirmPassword}
@@ -157,7 +157,7 @@ function SignupForm({ setIsLoggedIn }) {
               className="bg-richblack-800 rounded-[0.5rem] text-richblack-5 w-full p-[12px]"
             />
             <span
-              className="absolute right-3 top-[38px] cursor-pointer"
+              className="absolute right-3 top-[38px] cursor-pointer text-white"
               onClick={() => setShowPassword((prev) => !prev)}
             >
               {showPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
