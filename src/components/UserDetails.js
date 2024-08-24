@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const UserDetails = () => {
   const { state } = useLocation();
   const { user } = state; // Extract user data from state
+
+  // Initialize transactionHistory state properly
+  const [transactionHistory, setTransactionHistory] = useState(
+    user.transactionHistory || []
+  );
 
   const [formData, setFormData] = useState({
     recipientAccountNumber: "",
@@ -17,17 +23,12 @@ const UserDetails = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     let customers = JSON.parse(sessionStorage.getItem("users")) || [];
-    console.log("====customers====>", customers);
     let customer2 = customers.find(
       (c) => c.accountNumber === formData.recipientAccountNumber
     );
-    console.log("====user====>", user);
-    console.log("====customer2====>", customer2);
-
-    setBalance(Number(user.initialBalance));
 
     const { recipientAccountNumber, amount } = formData;
     const amountNumber = Number(amount);
@@ -37,75 +38,156 @@ const UserDetails = () => {
       return;
     }
 
-    console.log("====amountNumber====>", amountNumber);
-    console.log("====balance====>", balance);
-
+    // Update balances
     user.initialBalance = balance - amountNumber;
     customer2.initialBalance = customer2.initialBalance + amountNumber;
     setBalance(user.initialBalance);
-    customers = customers.map(
-      (c) => (
-        console.log("=====customerupdate=====>", c),
-        c.accountNumber === user.accountNumber
-          ? user
-          : c.accountNumber === customer2.accountNumber
-          ? customer2
-          : c
-      )
+
+    // Create new transaction records
+    const newTransaction = {
+      amount: amountNumber,
+      type: "debit",
+      description: `Transfer to account ${recipientAccountNumber}`,
+      timestamp: new Date().toLocaleString(),
+    };
+
+    const recipientTransaction = {
+      amount: amountNumber,
+      type: "credit",
+      description: `Transfer from account ${user.accountNumber}`,
+      timestamp: new Date().toLocaleString(),
+    };
+
+    // Update transaction histories
+    const updatedUserTransactions = [...transactionHistory, newTransaction];
+
+    const updatedRecipientTransactions = [
+      ...(customer2.transactionHistory || []),
+      recipientTransaction,
+    ];
+
+    // Update users' transaction histories
+    user.transactionHistory = updatedUserTransactions;
+    customer2.transactionHistory = updatedRecipientTransactions;
+
+    // Update state
+    setTransactionHistory(updatedUserTransactions);
+
+    // Save updated users to session storage
+    customers = customers.map((c) =>
+      c.accountNumber === user.accountNumber
+        ? user
+        : c.accountNumber === customer2.accountNumber
+        ? customer2
+        : c
     );
     sessionStorage.setItem("users", JSON.stringify(customers));
 
-    alert("Funds transferred successfully");
+    toast.success("Funds transferred successfully");
   };
 
   return (
-    <div className="flex justify-between w-11/12 max-w-[1160px] py-12 mx-auto gap-x-12 gap-y-0">
-      <div className="w-7/12 max-w-[450px] ">
-        <div className="relative w-auto overflow-x-auto rounded-md">
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-              <tr>
-                <th scope="col" className="px-6 py-3">
-                  Name
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Email
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Role
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Account Number
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Balance
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Active
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-gray-900 dark:text-white"
-                >
-                  {user.username}
-                </th>
-                <td className="px-6 py-4">{user.email}</td>
-                <td className="px-6 py-4">{user.role}</td>
-                <td className="px-6 py-4">{user.accountNumber}</td>
-                <td className="px-6 py-4">${balance}</td>
-                <td className="px-6 py-4">{user.isActive ? "Yes" : "No"}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+    <div className="flex flex-col w-11/12 max-w-[1160px] py-12 mx-auto gap-y-12">
+      <div className="w-full flex justify-between gap-x-12">
+        <div className="w-7/12 max-w-[450px]">
+          <div className="relative w-auto overflow-x-auto rounded-md">
+            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                  <th scope="col" className="px-6 py-3">
+                    Name
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Email
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Role
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Account Number
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Balance
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Active
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                  <th
+                    scope="row"
+                    className="px-6 py-4 font-medium text-gray-900 dark:text-white"
+                  >
+                    {user.username}
+                  </th>
+                  <td className="px-6 py-4">{user.email}</td>
+                  <td className="px-6 py-4">{user.role}</td>
+                  <td className="px-6 py-4">{user.accountNumber}</td>
+                  <td className="px-6 py-4">${balance}</td>
+                  <td className="px-6 py-4">{user.isActive ? "Yes" : "No"}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-      <div className="relative w-5/12 max-w-[450px]">
-        <div className="flex justify-center items-center min-h-screen bg-gray-100">
+          {/* Transaction History Table */}
+          <div className="mt-8">
+            <h3 className="text-xl font-semibold mb-4">Transaction History</h3>
+            <div className="relative w-auto overflow-x-auto rounded-md">
+              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                  <tr>
+                    <th scope="col" className="px-6 py-3">
+                      Amount
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Type
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Description
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Timestamp
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {transactionHistory.map((transaction, index) => (
+                    <tr
+                      key={index}
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                    >
+                      <td className="px-6 py-4">
+                        {transaction.type === "debit"
+                          ? `- $${transaction.amount}`
+                          : `+ $${transaction.amount}`}
+                      </td>
+                      <td className="px-6 py-4 capitalize">
+                        {transaction.type}
+                      </td>
+                      <td className="px-6 py-4">{transaction.description}</td>
+                      <td className="px-6 py-4">{transaction.timestamp}</td>
+                    </tr>
+                  ))}
+                  {transactionHistory.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan="4"
+                        className="px-6 py-4 text-center text-gray-500"
+                      >
+                        No transactions found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div className="relative w-5/12 max-w-[450px]">
           <form
             onSubmit={handleSubmit}
             className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md"
