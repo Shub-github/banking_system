@@ -5,12 +5,15 @@ import { useNavigate } from "react-router-dom";
 const AdminDashboard = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formStatus, setFormStatus] = useState([]);
+  const [search, setSearch] = useState("");
+  const [filteredStatus, setFilteredStatus] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => {
       const existingUsers = JSON.parse(sessionStorage.getItem("users")) || [];
       setFormStatus(existingUsers);
+      setFilteredStatus(existingUsers); // Initially, filtered data is the same as formStatus
     }, 200);
 
     return () => {
@@ -82,11 +85,39 @@ const AdminDashboard = () => {
     navigate("/user-details", { state: { user } });
   }
 
+  const handleSearch = () => {
+    const searchTerm = search.toLowerCase();
+    const filtered = formStatus.filter(
+      (user) =>
+        user.accountNumber.includes(searchTerm) ||
+        user.username.toLowerCase().includes(searchTerm) ||
+        user.initialBalance.toString().includes(searchTerm)
+    );
+    setFilteredStatus(filtered);
+  };
+
   return (
     <div className="flex justify-between w-11/12 max-w-[1160px] py-12 mx-auto gap-x-12 gap-y-0">
+      {/* Table */}
+
       <div className="w-11/12 h-auto max-w-[450px] ">
+        {/* Search Field */}
+        <div className=" text-gray-500 dark:text-gray-400 search m-4 p-4 flex items-center gap-4">
+          <input
+            type="text"
+            className="border border-solid border-white p-2 rounded"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by account number, name, or balance"
+          />
+          <button
+            className="px-4 py-2 shadow-lg bg-green-100 rounded-2xl"
+            onClick={handleSearch}
+          >
+            Search
+          </button>
+        </div>
         <div className="relative max-h-[500px] overflow-x-auto overflow-y-auto rounded-md">
-          {" "}
           {/* Set a max-height and allow both x and y axis scrolling */}
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -112,7 +143,7 @@ const AdminDashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {formStatus.map((user, index) => (
+              {filteredStatus.map((user, index) => (
                 <tr
                   onClick={() => handleRowClick(user)}
                   key={index}
