@@ -12,6 +12,9 @@ function SignupForm({ setIsLoggedIn }) {
     email: "",
     password: "",
     confirmPassword: "",
+    accountNumber: "",
+    initialBalance: 10000,
+    isActive: true,
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +25,12 @@ function SignupForm({ setIsLoggedIn }) {
       ...prevData,
       [event.target.name]: event.target.value,
     }));
+  }
+  function generateAccountNumber() {
+    // Generating a unique 10-digit account number
+    return Math.floor(Math.random() * 10000000000)
+      .toString()
+      .padStart(10, "0");
   }
 
   useEffect(() => {
@@ -56,6 +65,9 @@ function SignupForm({ setIsLoggedIn }) {
       username: formData.firstName + " " + formData.lastName, // Add a space between firstName and lastName
       password: formData.password,
       email: formData.email,
+      accountNumber: generateAccountNumber(),
+      initialBalance: formData.initialBalance,
+      isActive: formData.isActive,
       role: isFirstUser ? "admin" : "user",
     };
 
@@ -76,6 +88,9 @@ function SignupForm({ setIsLoggedIn }) {
       email: "",
       password: "",
       confirmPassword: "",
+      accountNumber: "",
+      initialBalance: 10000,
+      isActive: true,
     });
     toast.success("Registration successful !!");
 

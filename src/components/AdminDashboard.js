@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formStatus, setFormStatus] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const existingUsers = JSON.parse(sessionStorage.getItem("users")) || [];
-    setFormStatus(existingUsers);
+    const timer = setTimeout(() => {
+      const existingUsers = JSON.parse(sessionStorage.getItem("users")) || [];
+      setFormStatus(existingUsers);
+    }, 200);
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, [isSubmitted]);
 
   const [formData, setFormData] = useState({
@@ -70,10 +78,16 @@ const AdminDashboard = () => {
     });
   }
 
+  function handleRowClick(user) {
+    navigate("/user-details", { state: { user } });
+  }
+
   return (
     <div className="flex justify-between w-11/12 max-w-[1160px] py-12 mx-auto gap-x-12 gap-y-0">
-      <div className="w-11/12 max-w-[450px] ">
-        <div className="relative overflow-x-auto rounded-md">
+      <div className="w-11/12 h-auto max-w-[450px] ">
+        <div className="relative max-h-[500px] overflow-x-auto overflow-y-auto rounded-md">
+          {" "}
+          {/* Set a max-height and allow both x and y axis scrolling */}
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
@@ -100,8 +114,9 @@ const AdminDashboard = () => {
             <tbody>
               {formStatus.map((user, index) => (
                 <tr
+                  onClick={() => handleRowClick(user)}
                   key={index}
-                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 cursor-pointer"
                 >
                   <th
                     scope="row"

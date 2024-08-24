@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import AdminDashboard from "./components/AdminDashboard";
 import UserDashboard from "./components/UserDashboard";
+import UserDetails from "./components/UserDetails";
 // import { Route } from "react-router-dom";
 
 function App() {
@@ -22,7 +23,7 @@ function App() {
   }
   console.log("=====appjs===>", savedUser);
   return (
-    <div className="w-screen h-screen bg-richblack-900 flex flex-col">
+    <div className="min-w-full min-h-screen bg-richblack-900 flex flex-col">
       <Navbar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -40,7 +41,7 @@ function App() {
             userRole === "admin" ? <AdminDashboard /> : <UserDashboard />
           }
         />
-        {/* <Route path="/admin-dashboard" element={<AdminDashboard />} /> */}
+        <Route path="/user-details" element={<UserDetails />} />
         {/* <Route path="/user-dashboard" element={<UserDashboard />} /> */}
       </Routes>
     </div>
