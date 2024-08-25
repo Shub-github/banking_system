@@ -158,7 +158,9 @@ const AdminDashboard = () => {
                   <td className="px-6 py-4">{user.email}</td>
                   <td className="px-6 py-4">{user.role}</td>
                   <td className="px-6 py-4">{user.accountNumber}</td>
-                  <td className="px-6 py-4">${user.initialBalance}</td>
+                  <td className="px-6 py-4">
+                    ${user.initialBalance.toFixed(2)}
+                  </td>
                   <td className="px-6 py-4">{user.isActive ? "Yes" : "No"}</td>
                 </tr>
               ))}
