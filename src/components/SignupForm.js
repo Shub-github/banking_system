@@ -18,7 +18,6 @@ function SignupForm({ setIsLoggedIn }) {
   });
 
   const [showPassword, setShowPassword] = useState(false);
-  // const [accountType, setAccountType] = useState("student");
 
   function changeHandler(event) {
     setFormData((prevData) => ({
@@ -89,10 +88,6 @@ function SignupForm({ setIsLoggedIn }) {
     });
     toast.success("Registration successful !!");
 
-    // console.log("printing Data with navigate to Dashboard !!");
-    console.log(newUser);
-
-    // navigate("/dashboard");
     navigate("/login");
   }
 

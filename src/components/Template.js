@@ -12,13 +12,12 @@ function Template({ title, desc1, desc2, image, formType, setIsLoggedIn }) {
           {title}
         </h1>
 
-        {/* idr description */}
+        {/* description */}
         <p className="text-[1.125rem] leading[1.625rem] mt-4">
           <spam className="text-richblack-100">{desc1}</spam>
 
           <spam className="text-blue-100 italic">{desc2}</spam>
         </p>
-        {/* Idr form ayega signup se ya loginform */}
 
         {formType === "signup" ? (
           <SignupForm setIsLoggedIn={setIsLoggedIn} />
@@ -26,7 +25,6 @@ function Template({ title, desc1, desc2, image, formType, setIsLoggedIn }) {
           <LoginForm setIsLoggedIn={setIsLoggedIn} />
         )}
 
-        {/* idr hum line layegai */}
         <div className="flex w-full items-center my-4 gap-x-2">
           <div className="w-full h-[1px] bg-richblack-700"></div>
           <div className="text-richblack-700 font-medium leading[1.375rem]">
@@ -43,7 +41,7 @@ function Template({ title, desc1, desc2, image, formType, setIsLoggedIn }) {
           <p>Signup with google!!</p>
         </button>
       </div>
-      {/* Image ke liye */}
+
       <div className="relative w-11/12 max-w-[450px] rounded-md">
         <img
           src={frameImage}

@@ -11,7 +11,6 @@ function Navbar(props) {
   const handleLogout = () => {
     sessionStorage.removeItem("user");
     sessionStorage.clear();
-    // alert("Logged out successfully!");
     navigate("/login");
   };
 
