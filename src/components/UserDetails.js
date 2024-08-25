@@ -23,6 +23,7 @@ const UserDetails = () => {
 
   const fetchExchangeRates = async (currency) => {
     try {
+      console.log("=======user===>", EXCHANGE_API);
       const response = await fetch(`${EXCHANGE_API}&symbols=${currency}`);
       const data = await response.json();
       console.log("=======currency====>", currency);
@@ -116,6 +117,7 @@ const UserDetails = () => {
 
     // Update state
     setTransactionHistory(updatedUserTransactions);
+    setFormData({ recipientAccountNumber: "", amount: "", currency: "USD" });
     toast.success("Funds transferred successfully");
   };
 

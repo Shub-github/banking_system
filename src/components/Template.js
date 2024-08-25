@@ -6,7 +6,7 @@ import { FcGoogle } from "react-icons/fc";
 
 function Template({ title, desc1, desc2, image, formType, setIsLoggedIn }) {
   return (
-    <div className="flex justify-between w-11/12 max-w-[1160px] py-12 mx-auto gap-x-12 gap-y-0">
+    <div className="flex justify-between w-11/12 max-w-[1160px] py-12 mx-auto gap-x-12 gap-y-0 rounded-md">
       <div className="w-11/12 max-w-[450px]">
         <h1 className="text-richblack-5 font-semibold text-[1.875rem] leading-[2.375rem]">
           {title}
@@ -44,7 +44,7 @@ function Template({ title, desc1, desc2, image, formType, setIsLoggedIn }) {
         </button>
       </div>
       {/* Image ke liye */}
-      <div className="relative w-11/12 max-w-[450px] ">
+      <div className="relative w-11/12 max-w-[450px] rounded-md">
         <img
           src={frameImage}
           alt="Pattern"

@@ -16,7 +16,7 @@ function Navbar(props) {
   };
 
   return (
-    <div className="flex justify-between items-center w-11/12 max-w-[1160px] py-4 mx-auto">
+    <div className="flex justify-between z-10 items-center w-11/12 max-w-[1160px] py-4 mx-auto">
       <Link to="/">
         <img src={logo} alt="Logo" width={80} height={32} loading="lazy"></img>
       </Link>
