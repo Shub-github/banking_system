@@ -35,12 +35,14 @@ function App() {
           path="/signup"
           element={<Signup setIsLoggedIn={setIsLoggedIn} />}
         />
-        <Route
-          path="/dashboard"
-          element={
-            userRole === "admin" ? <AdminDashboard /> : <UserDashboard />
-          }
-        />
+        {isLoggedIn && (
+          <Route
+            path="/dashboard"
+            element={
+              userRole === "admin" ? <AdminDashboard /> : <UserDashboard />
+            }
+          />
+        )}
         <Route path="/user-details" element={<UserDetails />} />
         {/* <Route path="/user-dashboard" element={<UserDashboard />} /> */}
       </Routes>
